@@ -1,0 +1,1250 @@
+//SLIP 01
+//Q3A.FSD
+
+const http = require('http');
+const fs = require('fs');
+const url = require('url');
+
+// create server
+http.createServer(function(req, res) {
+  if (req.url === '/append') {
+    // handle form submission
+    let body = '';
+    req.on('data', function(data) {
+      body += data;
+    });
+    req.on('end', function() {
+      // parse form data
+      const formData = new URLSearchParams(body);
+      const file1 = formData.get('file1');
+      const file2 = formData.get('file2');
+      
+      // read contents of file1
+      fs.readFile(file1, 'utf8', function(err, data) {
+        if (err) {
+          res.writeHead(404);
+          res.end('File not found');
+          return;
+        }
+        
+        // append contents of file1 to file2
+        fs.appendFile(file2, data, function(err) {
+          if (err) {
+            res.writeHead(500);
+            res.end('Error writing to file');
+            return;
+          }
+          
+          res.writeHead(200, {'Content-Type': 'text/html'});
+          res.end('<html><body>Contents of ' + file1 + ' have been appended to ' + file2 + '</body></html>');
+        });
+      });
+    });
+  } else {
+    // serve form
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.write('<html><body>');
+    res.write('<h1>Append contents of one file to another</h1>');
+    res.write('<form method="post" action="/append">');
+    res.write('<label for="file1">File 1:</label>');
+    res.write('<input type="text" name="file1"><br>');
+    res.write('<label for="file2">File 2:</label>');
+    res.write('<input type="text" name="file2"><br>');
+    res.write('<input type="submit" value="Append">');
+    res.write('</form>');
+    res.write('</body></html>');
+    res.end();
+  }
+}).listen(3000);
+
+console.log('Server running at http://localhost:3000/');
+
+//Q3B.FSD
+
+const http = require('http');
+const fs = require('fs');
+
+const server = http.createServer((req, res) => {
+  const filePath = '.' + req.url;
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      res.writeHead(404, {'Content-Type': 'text/plain'});
+      res.end('404 Not Found');
+    } else {
+      res.writeHead(200, {'Content-Type': 'text/plain'});
+      res.end(data);
+    }
+  });
+});
+
+server.listen(8080, () => {
+  console.log('Server running at http://localhost:8080/');
+});
+
+//SLIP 02
+
+//Q3 FSD
+
+const readline = require('readline');
+
+// define the correct username and password
+const correctUsername = 'user123';
+const correctPassword = 'password123';
+
+// create a readline interface for reading user input
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+// prompt the user for username and password
+rl.question('Enter your username: ', (username) => {
+  rl.question('Enter your password: ', (password) => {
+    // check if username and password are correct
+    if (username === correctUsername && password === correctPassword) {
+      console.log('Login successful');
+    } else {
+      throw new Error('Login failed');
+    }
+  });
+});
+
+// handle errors thrown by the program
+process.on('uncaughtException', (err) => {
+  console.error(err);
+  process.exit(1);
+});
+
+//SLIP 03
+
+//Q3 FSD
+
+const readline = require('readline');
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+rl.question('What is your name? ', (name) => {
+  console.log(`Hello, ${name.toUpperCase()}, nice to meet you!`);
+  rl.close();
+});
+
+//SLIP 04
+
+// Q3 FSD
+
+// Import required packages
+const express = require('express');
+const app = express();
+
+// Define routes
+app.get('/', (req, res) => {
+  res.send('Welcome to eLearning System!');
+});
+
+app.get('/student', (req, res) => {
+  res.send('This is the Student page.');
+});
+
+app.get('/course', (req, res) => {
+  res.send('This is the Course page.');
+});
+
+// Start server
+app.listen(3000, () => {
+  console.log('Server started on port 3000');
+});
+
+//SLIP 05
+
+//Q3 FSD
+
+const http = require('http');
+const fs = require('fs');
+
+const server = http.createServer((req, res) => {
+  const filePath = './index.html';
+  
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      res.writeHead(404, {'Content-Type': 'text/html'});
+      res.end('404 Not Found');
+    } else {
+      res.writeHead(200, {'Content-Type': 'text/html'});
+      res.end(data);
+    }
+  });
+});
+
+server.listen(8080, () => {
+  console.log('Server listening on port 8080');
+});
+
+//SLIP 06
+
+//Q3 FSD
+
+// Import required modules
+const MongoClient = require('mongodb').MongoClient;
+
+// Connection URL
+const url = 'mongodb://localhost:27017';
+
+// Database Name
+const dbName = 'movie_database';
+
+// Create a MongoClient instance
+const client = new MongoClient(url);
+
+// Use connect method to connect to the server
+client.connect(function(err) {
+  console.log("Connected successfully to server");
+
+  const db = client.db(dbName);
+
+  // Create a collection "Film" and insert documents
+  const filmCollection = db.collection('Film');
+  filmCollection.insertMany([
+    { title: 'The Shawshank Redemption', year: 1994, director: 'Frank Darabont' },
+    { title: 'The Godfather', year: 1972, director: 'Francis Ford Coppola' },
+    { title: 'The Dark Knight', year: 2008, director: 'Christopher Nolan' },
+    { title: 'Pulp Fiction', year: 1994, director: 'Quentin Tarantino' },
+    { title: 'The Lord of the Rings: The Fellowship of the Ring', year: 2001, director: 'Peter Jackson' }
+  ], function(err, result) {
+    if (err) throw err;
+    console.log("Inserted documents into Film collection");
+  });
+
+  // Create a collection "Actor" and insert documents
+  const actorCollection = db.collection('Actor');
+  actorCollection.insertMany([
+    { name: 'Morgan Freeman', age: 84, gender: 'Male' },
+    { name: 'Marlon Brando', age: 80, gender: 'Male' },
+    { name: 'Heath Ledger', age: 28, gender: 'Male' },
+    { name: 'Uma Thurman', age: 51, gender: 'Female' },
+    { name: 'Ian McKellen', age: 82, gender: 'Male' }
+  ], function(err, result) {
+    if (err) throw err;
+    console.log("Inserted documents into Actor collection");
+  });
+
+  // Close the connection to the server
+  client.close();
+});
+
+//SLIP 07
+
+//Q3 FSD
+
+const MongoClient = require('mongodb').MongoClient;
+
+// Connection URL
+const url = 'mongodb://localhost:27017';
+
+// Database Name
+const dbName = 'company';
+
+// Create a new MongoClient
+const client = new MongoClient(url);
+
+// Connect to the MongoDB server
+client.connect(function(err) {
+  if (err) {
+    console.log('Error occurred while connecting to MongoDB:', err);
+    return;
+  }
+
+  console.log('Connected successfully to the MongoDB server');
+
+  const db = client.db(dbName);
+
+  // Create 'Product' collection
+  const productCollection = db.collection('Product');
+
+  // Insert documents into 'Product' collection
+  productCollection.insertMany([
+    { name: 'Product1', company: 'TCS' },
+    { name: 'Product2', company: 'Infosys' },
+    { name: 'Product3', company: 'TCS' },
+    // Add more documents as needed
+  ], function(err, result) {
+    if (err) {
+      console.log('Error occurred while inserting documents into "Product" collection:', err);
+      client.close();
+      return;
+    }
+
+    console.log(`${result.insertedCount} documents inserted into "Product" collection`);
+
+    // Create 'Service' collection
+    const serviceCollection = db.collection('Service');
+
+    // Insert documents into 'Service' collection
+    serviceCollection.insertMany([
+      { name: 'Service1', company: 'TCS' },
+      { name: 'Service2', company: 'Infosys' },
+      { name: 'Service3', company: 'Wipro' },
+      // Add more documents as needed
+    ], function(err, result) {
+      if (err) {
+        console.log('Error occurred while inserting documents into "Service" collection:', err);
+        client.close();
+        return;
+      }
+
+      console.log(`${result.insertedCount} documents inserted into "Service" collection`);
+
+      // Find documents in 'Product' collection with company name "TCS"
+      productCollection.find({ company: 'TCS' }).toArray(function(err, docs) {
+        if (err) {
+          console.log('Error occurred while finding documents in "Product" collection:', err);
+          client.close();
+          return;
+        }
+
+        console.log('Documents in "Product" collection with company name "TCS":');
+        console.log(docs);
+
+        client.close();
+      });
+    });
+  });
+});
+
+//SLIP 08
+
+//Q3 FSD
+
+const http = require('http');
+const fs = require('fs');
+
+const server = http.createServer((req, res) => {
+  if (req.url === '/') {
+    // Read the HTML file
+    fs.readFile('index.html', (err, data) => {
+      if (err) {
+        // Handle error
+        res.writeHead(500);
+        res.end('Error loading index.html');
+      } else {
+        // Serve the HTML file
+        res.writeHead(200, {'Content-Type': 'text/html'});
+        res.end(data);
+      }
+    });
+  } else {
+    // Handle 404 error
+    res.writeHead(404);
+    res.end('Page not found');
+  }
+});
+
+server.listen(3000, () => {
+  console.log('Server running on port 3000');
+});
+
+//SLIP 09
+
+//Q3 FSD
+
+// import required modules
+const mongoose = require('mongoose');
+
+// connect to the MongoDB database
+mongoose.connect('mongodb://localhost/students', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
+
+// define the schema for the UG collection
+const ugSchema = new mongoose.Schema({
+  name: String,
+  rollNo: String,
+  batch: String,
+  department: String,
+  cgpa: Number
+});
+
+// create the UG collection model
+const UG = mongoose.model('UG', ugSchema);
+
+// define the schema for the PG collection
+const pgSchema = new mongoose.Schema({
+  name: String,
+  rollNo: String,
+  batch: String,
+  department: String,
+  percentage: Number
+});
+
+// create the PG collection model
+const PG = mongoose.model('PG', pgSchema);
+
+// create a new document in the UG collection
+const ugStudent = new UG({
+  name: 'John Doe',
+  rollNo: 'UG001',
+  batch: '2023',
+  department: 'Computer Science',
+  cgpa: 8.5
+});
+
+// save the UG student document to the database
+ugStudent.save()
+  .then((result) => {
+    console.log(result);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+// create a new document in the PG collection
+const pgStudent = new PG({
+  name: 'Jane Smith',
+  rollNo: 'PG001',
+  batch: '2022',
+  department: 'Electrical Engineering',
+  percentage: 85
+});
+
+// save the PG student document to the database
+pgStudent.save()
+  .then((result) => {
+    console.log(result);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+
+//SLIP 10
+
+//Q3 FSD
+
+const mongoose = require('mongoose');
+
+// connect to database
+mongoose.connect('mongodb://localhost/busdb', { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Connected to MongoDB...'))
+  .catch(err => console.error('Could not connect to MongoDB...', err));
+
+// define schema for bus depo
+const busDepoSchema = new mongoose.Schema({
+  name: String,
+  location: String,
+  capacity: Number
+});
+
+// define schema for bus route
+const busRouteSchema = new mongoose.Schema({
+  routeNumber: Number,
+  startingPoint: String,
+  endingPoint: String,
+  distance: Number,
+  depo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'BusDepo'
+  }
+});
+
+// create models for bus depo and bus route
+const BusDepo = mongoose.model('BusDepo', busDepoSchema);
+const BusRoute = mongoose.model('BusRoute', busRouteSchema);
+
+// create a new bus depo and save to database
+const busDepo = new BusDepo({
+  name: 'ABC Bus Depo',
+  location: 'XYZ Street',
+  capacity: 50
+});
+busDepo.save();
+
+// create a new bus route and save to database
+const busRoute = new BusRoute({
+  routeNumber: 1,
+  startingPoint: 'Point A',
+  endingPoint: 'Point B',
+  distance: 10,
+  depo: busDepo._id
+});
+busRoute.save();
+
+
+//SLIP 11
+
+//Q3A FSD
+
+const express = require('express');
+const fs = require('fs');
+const path = require('path');
+
+const app = express();
+app.use(express.urlencoded({ extended: true }));
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.post('/appendFiles', (req, res) => {
+  const file1 = req.body.file1;
+  const file2 = req.body.file2;
+
+  fs.readFile(file1, 'utf8', (err, data) => {
+    if (err) {
+      console.error(`Error reading file ${file1}: ${err}`);
+      return res.status(500).send(`Error reading file ${file1}`);
+    }
+
+    fs.appendFile(file2, data, (err) => {
+      if (err) {
+        console.error(`Error appending data to file ${file2}: ${err}`);
+        return res.status(500).send(`Error appending data to file ${file2}`);
+      }
+
+      console.log(`Data from file ${file1} appended to file ${file2}`);
+      res.status(200).send(`Data from file ${file1} appended to file ${file2}`);
+    });
+  });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
+});
+
+//Q3B FSD
+
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
+
+const server = http.createServer((req, res) => {
+  let filePath = '.' + req.url;
+  if (filePath == './') {
+    filePath = './index.html';
+  }
+
+  const extname = String(path.extname(filePath)).toLowerCase();
+  const mimeTypes = {
+    '.html': 'text/html',
+    '.js': 'text/javascript',
+    '.css': 'text/css',
+    '.json': 'application/json',
+    '.png': 'image/png',
+    '.jpg': 'image/jpg',
+    '.gif': 'image/gif',
+    '.svg': 'image/svg+xml',
+    '.wav': 'audio/wav',
+    '.mp4': 'video/mp4',
+    '.woff': 'application/font-woff',
+    '.ttf': 'application/font-ttf',
+    '.eot': 'application/vnd.ms-fontobject',
+    '.otf': 'application/font-otf',
+    '.wasm': 'application/wasm'
+  };
+
+  const contentType = mimeTypes[extname] || 'application/octet-stream';
+
+  fs.readFile(filePath, function(error, content) {
+    if (error) {
+      if (error.code == 'ENOENT') {
+        res.writeHead(404, { 'Content-Type': 'text/html' });
+        res.end('<h1>404 Not Found</h1><p>The requested file was not found.</p>');
+      } else {
+        res.writeHead(500);
+        res.end(`Internal Server Error: ${error.code}`);
+      }
+    } else {
+      res.writeHead(200, { 'Content-Type': contentType });
+      res.end(content, 'utf-8');
+    }
+  });
+});
+
+const port = process.env.PORT || 3000;
+server.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
+
+
+//SLIP 12
+
+//Q3 FSD
+
+const mongoose = require('mongoose');
+
+// connect to MongoDB
+mongoose.connect('mongodb://localhost:27017/teacherdb', { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Connected to MongoDB...'))
+  .catch(err => console.error('Could not connect to MongoDB...', err));
+
+// create teacher schema
+const teacherSchema = new mongoose.Schema({
+  tno: String,
+  tname: String,
+  subject: String
+});
+
+// create Teacher model
+const Teacher = mongoose.model('Teacher', teacherSchema);
+
+// insert teachers into Teacher collection
+async function insertTeachers() {
+  const teachers = [
+    { tno: '001', tname: 'John Smith', subject: 'JAVA' },
+    { tno: '002', tname: 'Jane Doe', subject: 'Python' },
+    { tno: '003', tname: 'Bob Johnson', subject: 'C++' },
+    { tno: '004', tname: 'Alice Lee', subject: 'JAVA' },
+    { tno: '005', tname: 'Mike Chen', subject: 'JavaScript' }
+  ];
+
+  const result = await Teacher.insertMany(teachers);
+  console.log(result);
+}
+
+// display teacher who is teaching "JAVA" subject
+async function displayJavaTeacher() {
+  const javaTeacher = await Teacher.find({ subject: 'JAVA' });
+  console.log(javaTeacher);
+}
+
+// call insertTeachers function to insert teachers into Teacher collection
+insertTeachers();
+
+// call displayJavaTeacher function to display teacher who is teaching "JAVA" subject
+displayJavaTeacher();
+
+//SLIP 13
+
+//Q3 FSD
+
+const mongoose = require('mongoose');
+
+// Connect to MongoDB
+mongoose.connect('mongodb://localhost/bus-db', { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Connected to MongoDB...'))
+  .catch(err => console.error('Could not connect to MongoDB...', err));
+
+// Define the schema for bus-depo
+const busDepoSchema = new mongoose.Schema({
+  name: String,
+  location: String
+});
+
+// Define the schema for busroute
+const busRouteSchema = new mongoose.Schema({
+  name: String,
+  route: String,
+  distance: Number
+});
+
+// Create bus-depo and busroute models
+const BusDepo = mongoose.model('bus-depo', busDepoSchema);
+const BusRoute = mongoose.model('busroute', busRouteSchema);
+
+// Insert documents into bus-depo collection
+const busDepo = new BusDepo({
+  name: 'ABC Bus Depo',
+  location: 'Pune'
+});
+busDepo.save()
+  .then(() => console.log('Document saved in bus-depo collection...'))
+  .catch(err => console.error('Could not save document in bus-depo collection...', err));
+
+// Insert documents into busroute collection
+const busRoute = new BusRoute({
+  name: 'ABC Bus',
+  route: 'Pune to Satara',
+  distance: 120
+});
+busRoute.save()
+  .then(() => console.log('Document saved in busroute collection...'))
+  .catch(err => console.error('Could not save document in busroute collection...', err));
+
+// Find the name of bus whose route is "Pune to Satara"
+BusRoute.findOne({ route: 'Pune to Satara' }, 'name')
+  .then(bus => console.log(`Bus name: ${bus.name}`))
+  .catch(err => console.error('Could not find bus...', err));
+
+
+//SLIP 14
+
+//Q3A
+
+const http = require('http');
+
+// Create a new server object.
+const server = http.createServer((req, res) => {
+  // Send a simple response.
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.end('Hello World!');
+});
+
+// Listen for requests on port 3000.
+server.listen(3000, () => {
+  console.log('Server listening on port 3000');
+});
+
+//Q3B
+
+const db = require('./db');
+
+const query = `
+SELECT COUNT(*) AS total_actors
+FROM actors
+WHERE state = 'CA';
+`;
+
+const results = await db.query(query);
+
+const totalActors = results[0].total_actors;
+
+console.log(`There are ${totalActors} actors in the database who were born in California.`);
+
+//SLIP 15
+
+//Q3A FSD
+
+var http = require('http');
+var url = require('url');
+var fs = require('fs');
+
+http.createServer(function (req, res) {
+  var q = url.parse(req.url, true);
+  var filename = "." + q.pathname;
+
+  try {
+    fs.readFile(filename, function (err, data) {
+      if (err) {
+        res.writeHead(404, {'Content-Type': 'text/html'});
+        return res.end("404 Not Found");
+      }
+      res.writeHead(200, {'Content-Type': 'text/html'});
+      res.write(data);
+      res.end();
+    });
+  } catch (e) {
+    res.writeHead(404, {'Content-Type': 'text/html'});
+    return res.end("404 Not Found");
+  }
+}).listen(8080);
+
+//Q3B 
+
+// Create a database called "Movies"
+const db = new MongoClient("mongodb://localhost:27017").db("Movies");
+
+// Create a collection called "Films"
+const films = db.collection("Films");
+
+// Add five movies to the "Films" collection
+films.insertMany([
+  {
+    "name": "The Shawshank Redemption",
+    "genre": "Drama",
+    "rating": 9.3
+  },
+  {
+    "name": "The Godfather",
+    "genre": "Crime",
+    "rating": 9.2
+  },
+  {
+    "name": "The Dark Knight",
+    "genre": "Action",
+    "rating": 9.0
+  },
+  {
+    "name": "Pulp Fiction",
+    "genre": "Crime",
+    "rating": 8.9
+  },
+  {
+    "name": "The Lord of the Rings: The Return of the King",
+    "genre": "Fantasy",
+    "rating": 8.9
+  }
+]);
+
+// Create a collection called "Tags"
+const tags = db.collection("Tags");
+
+// Add five tags to the "Tags" collection
+tags.insertMany([
+  {
+    "name": "Action"
+  },
+  {
+    "name": "Crime"
+  },
+  {
+    "name": "Drama"
+  },
+  {
+    "name": "Fantasy"
+  },
+  {
+    "name": "Thriller"
+  }
+]);
+
+// Create a collection called "Ratings"
+const ratings = db.collection("Ratings");
+
+// Add five ratings to the "Ratings" collection
+ratings.insertMany([
+  {
+    "user_id": 1,
+    "movie_id": 1,
+    "rating": 5
+  },
+  {
+    "user_id": 2,
+    "movie_id": 2,
+    "rating": 4
+  },
+  {
+    "user_id": 3,
+    "movie_id": 3,
+    "rating": 3
+  },
+  {
+    "user_id": 4,
+    "movie_id": 4,
+    "rating": 2
+  },
+  {
+    "user_id": 5,
+    "movie_id": 5,
+    "rating": 1
+  }
+]);
+
+
+//SLIP 16
+
+//Q3 FSD
+
+// Import the necessary modules
+const express = require('express');
+const bodyParser = require('body-parser');
+const mongodb = require('mongodb');
+
+// Create an Express app
+const app = express();
+
+// Configure body parser to parse the HTTP POST data
+app.use(bodyParser.json());
+
+// Create a connection to the MongoDB database
+const mongoClient = new mongodb.MongoClient('mongodb://localhost:27017/mydb');
+
+// Create a route to handle the sign-up form
+app.post('/signup', (req, res) => {
+  // Get the user data from the HTTP POST request
+  const { name, email, password, phone } = req.body;
+
+  // Check if the user name already exists
+  mongoClient.db('mydb').collection('users').findOne({
+    name,
+  }, (err, user) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send('Internal server error');
+    } else if (user) {
+      res.status(409).send('User name already exists');
+    } else {
+      // Create a new user document
+      const newUser = {
+        name,
+        email,
+        password,
+        phone,
+      };
+
+      // Insert the new user document into the database
+      mongoClient.db('mydb').collection('users').insertOne(newUser, (err, result) => {
+        if (err) {
+          console.log(err);
+          res.status(500).send('Internal server error');
+        } else {
+          res.status(201).send('User created successfully');
+        }
+      });
+    }
+  });
+});
+
+// Start the app
+app.listen(3000, () => {
+  console.log('App listening on port 3000');
+});
+
+//SLIP 17
+
+//Q3 FSD
+
+const os = require("os");
+
+// Get the operating system platform
+const platform = os.platform();
+
+// Get the temporary file directory
+const tempDir = os.tmpdir();
+
+// Print the output
+console.log(`Operating system platform: ${platform}`);
+console.log(`Temporary file directory: ${tempDir}`);
+
+//SLIP 18
+
+//Q3 FSD
+
+const express = require("express");
+const app = express();
+
+// Create a database connection
+const db = require("mysql").createConnection({
+  host: "localhost",
+  user: "root",
+  password: "",
+  database: "login"
+});
+
+// Define a route for the login page
+app.get("/login", (req, res) => {
+  res.render("login.html");
+});
+
+// Define a route for the login action
+app.post("/login", (req, res) => {
+  // Get the username and password from the request
+  const username = req.body.username;
+  const password = req.body.password;
+
+  // Check if the username and password are correct
+  db.query("SELECT * FROM users WHERE username = ? AND password = ?", [username, password], (err, rows) => {
+    if (err) {
+      console.log(err);
+      res.send("Error: " + err);
+    } else if (rows.length === 0) {
+      res.send("Error: Invalid username or password");
+    } else {
+      res.send("Login successful");
+    }
+  });
+});
+
+// Start the server
+app.listen(3000, () => {
+  console.log("Server listening on port 3000");
+})
+
+//SLIP 19
+
+//Q3 FSD
+
+const os = require('os');
+
+// Get the operating system platform
+const platform = os.platform();
+
+// Get the temporary file directory
+const tempDir = os.tmpdir();
+
+// Print the output
+console.log(`Operating system platform: ${platform}`);
+console.log(`Temporary file directory: ${tempDir}`);
+
+//SLIP 20
+
+//Q3A FSD
+
+const os = require('os');
+
+// Get the operating system platform
+const platform = os.platform();
+
+// Get the temporary file directory
+const tempDir = os.tmpdir();
+
+// Print the output
+console.log(`Operating system platform: ${platform}`);
+console.log(`Temporary file directory: ${tempDir}`);
+
+//Q3B
+
+const upperCase = require('upper-case');
+
+const originalString = 'Hello, Welcome in Node js';
+
+const uppercaseString = upperCase(originalString);
+
+console.log(uppercaseString); // HELLO, WELCOME IN NODE JS
+
+//SLIP 21
+
+//Q3A HTML FSD
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Append File</title>
+</head>
+<body>
+  <h1>Append File</h1>
+  <form action="/append" method="post">
+    <input type="text" name="firstFile" placeholder="First File">
+    <input type="text" name="secondFile" placeholder="Second File">
+    <input type="submit" value="Append">
+  </form>
+</body>
+</html>
+
+// Q3A JS
+
+const express = require('express');
+const fs = require('fs');
+
+const app = express();
+
+app.post('/append', (req, res) => {
+  const firstFile = req.body.first_file;
+  const secondFile = req.body.second_file;
+
+  // Read the contents of the first file.
+  const firstFileContents = fs.readFileSync(firstFile, 'utf8');
+
+  // Append the contents of the first file to the second file.
+  fs.appendFileSync(secondFile, firstFileContents);
+
+  // Redirect the user to the main page.
+  res.redirect('/');
+});
+
+app.listen(3000, () => {
+  console.log('App listening on port 3000');
+});
+
+//Q3B
+
+const http = require('http');
+const url = require('url');
+const fs = require('fs');
+
+const server = http.createServer((req, res) => {
+  // Parse the request URL
+  const parsedUrl = url.parse(req.url, true);
+
+  // Get the requested file name
+  const filename = parsedUrl.pathname;
+
+  // Try to open the file
+  try {
+    const file = fs.readFileSync(filename, 'utf8');
+
+    // Set the response headers
+    res.writeHead(200, {'Content-Type': 'text/html'});
+
+    // Write the file content to the response body
+    res.write(file);
+
+    // End the response
+    res.end();
+  } catch (err) {
+    // If the file could not be opened, throw a 404 error
+    res.writeHead(404, {'Content-Type': 'text/html'});
+    res.end('404 Not Found');
+  }
+});
+
+// Listen on port 8080
+server.listen(8080, () => {
+  console.log('Server listening on port 8080');
+});
+
+//SLIP 22
+
+//Q3 FSD
+
+const fs = require('fs');
+const http = require('http');
+
+// Create a server object
+const server = http.createServer((req, res) => {
+  // Get the requested path
+  const path = req.url;
+
+  // Check if the requested path is a file
+  if (fs.existsSync(path)) {
+    // Serve the file
+    res.writeHead(200, {
+      'Content-Type': 'text/html',
+    });
+    fs.createReadStream(path).pipe(res);
+  } else {
+    // 404 Not Found
+    res.writeHead(404, {
+      'Content-Type': 'text/plain',
+    });
+    res.end('File not found');
+  }
+});
+
+// Listen on port 8080
+server.listen(8080, () => {
+  console.log('Server listening on port 8080');
+});
+
+//SLIP 23
+
+//Q3 FSD
+
+const { readline } = require('readline');
+
+const rl = readline.createInterface({
+  input: process.stdin,
+});
+
+rl.question('What is your name? ', (name) => {
+  console.log(`Hello, ${name.toUpperCase()}, nice to meet you!`);
+});
+
+//SLIP 24
+
+//Q3 FSD
+
+// Import the Express library
+const express = require('express');
+
+// Create an Express app
+const app = express();
+
+// Create a router for students
+const studentRouter = express.Router();
+
+// Define the routes for students
+studentRouter.get('/', (req, res) => {
+  // Get all students
+  res.json([
+    {
+      id: 1,
+      name: 'John Doe',
+      email: 'johndoe@example.com',
+    },
+    {
+      id: 2,
+      name: 'Jane Doe',
+      email: 'janedoe@example.com',
+    },
+  ]);
+});
+
+studentRouter.post('/', (req, res) => {
+  // Create a new student
+  const student = {
+    name: req.body.name,
+    email: req.body.email,
+  };
+
+  // Save the student to the database
+  // ...
+
+  // Redirect the user to the student list page
+  res.redirect('/students');
+});
+
+studentRouter.delete('/:id', (req, res) => {
+  // Delete the student with the given ID
+  // ...
+
+  // Redirect the user to the student list page
+  res.redirect('/students');
+});
+
+// Create a router for courses
+const courseRouter = express.Router();
+
+// Define the routes for courses
+courseRouter.get('/', (req, res) => {
+  // Get all courses
+  res.json([
+    {
+      id: 1,
+      name: 'Introduction to Computer Science',
+      instructor: 'John Doe',
+    },
+    {
+      id: 2,
+      name: 'Data Structures and Algorithms',
+      instructor: 'Jane Doe',
+    },
+  ]);
+});
+
+courseRouter.post('/', (req, res) => {
+  // Create a new course
+  const course = {
+    name: req.body.name,
+    instructor: req.body.instructor,
+  };
+
+  // Save the course to the database
+  // ...
+
+  // Redirect the user to the course list page
+  res.redirect('/courses');
+});
+
+courseRouter.delete('/:id', (req, res) => {
+  // Delete the course with the given ID
+  // ...
+
+  // Redirect the user to the course list page
+  res.redirect('/courses');
+});
+
+// Mount the student and course routers on the app
+app.use('/students', studentRouter);
+app.use('/courses', courseRouter);
+
+// Start the app
+app.listen(3000, () => {
+  console.log('App listening on port 3000');
+});
+
+//SLIP 25
+
+//Q3 FSD
+
+const fs = require('fs');
+const http = require('http');
+
+// Get the path to the web page file.
+const filePath = './index.html';
+
+// Read the contents of the web page file.
+const contents = fs.readFileSync(filePath);
+
+// Create a new HTTP server.
+const server = http.createServer((req, res) => {
+  // Serve the web page file.
+  res.writeHead(200, {'Content-Type': 'text/html'});
+  res.write(contents);
+  res.end();
+});
+
+// Start the HTTP server.
+server.listen(3000, () => {
+  console.log('Server started on port 3000');
+});
+
+
+
+
+
