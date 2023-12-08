@@ -1,0 +1,97 @@
+//SLIP 11
+
+//Q3A FSD
+
+const express = require('express');
+const fs = require('fs');
+const path = require('path');
+
+const app = express();
+app.use(express.urlencoded({ extended: true }));
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.post('/appendFiles', (req, res) => {
+  const file1 = req.body.file1;
+  const file2 = req.body.file2;
+
+  fs.readFile(file1, 'utf8', (err, data) => {
+    if (err) {
+      console.error(`Error reading file ${file1}: ${err}`);
+      return res.status(500).send(`Error reading file ${file1}`);
+    }
+
+    fs.appendFile(file2, data, (err) => {
+      if (err) {
+        console.error(`Error appending data to file ${file2}: ${err}`);
+        return res.status(500).send(`Error appending data to file ${file2}`);
+      }
+
+      console.log(`Data from file ${file1} appended to file ${file2}`);
+      res.status(200).send(`Data from file ${file1} appended to file ${file2}`);
+    });
+  });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
+});
+
+  
+
+//Q3B FSD
+
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
+
+const server = http.createServer((req, res) => {
+  let filePath = '.' + req.url;
+  if (filePath == './') {
+    filePath = './index.html';
+  }
+
+  const extname = String(path.extname(filePath)).toLowerCase();
+  const mimeTypes = {
+    '.html': 'text/html',
+    '.js': 'text/javascript',
+    '.css': 'text/css',
+    '.json': 'application/json',
+    '.png': 'image/png',
+    '.jpg': 'image/jpg',
+    '.gif': 'image/gif',
+    '.svg': 'image/svg+xml',
+    '.wav': 'audio/wav',
+    '.mp4': 'video/mp4',
+    '.woff': 'application/font-woff',
+    '.ttf': 'application/font-ttf',
+    '.eot': 'application/vnd.ms-fontobject',
+    '.otf': 'application/font-otf',
+    '.wasm': 'application/wasm'
+  };
+
+  const contentType = mimeTypes[extname] || 'application/octet-stream';
+
+  fs.readFile(filePath, function(error, content) {
+    if (error) {
+      if (error.code == 'ENOENT') {
+        res.writeHead(404, { 'Content-Type': 'text/html' });
+        res.end('<h1>404 Not Found</h1><p>The requested file was not found.</p>');
+      } else {
+        res.writeHead(500);
+        res.end(`Internal Server Error: ${error.code}`);
+      }
+    } else {
+      res.writeHead(200, { 'Content-Type': contentType });
+      res.end(content, 'utf-8');
+    }
+  });
+});
+
+const port = process.env.PORT || 3000;
+server.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});

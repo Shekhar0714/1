@@ -1,0 +1,46 @@
+//SLIP 12
+
+//Q3 FSD
+
+const mongoose = require('mongoose');
+
+// connect to MongoDB
+mongoose.connect('mongodb://localhost:27017/teacherdb', { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Connected to MongoDB...'))
+  .catch(err => console.error('Could not connect to MongoDB...', err));
+
+// create teacher schema
+const teacherSchema = new mongoose.Schema({
+  tno: String,
+  tname: String,
+  subject: String
+});
+
+// create Teacher model
+const Teacher = mongoose.model('Teacher', teacherSchema);
+
+// insert teachers into Teacher collection
+async function insertTeachers() {
+  const teachers = [
+    { tno: '001', tname: 'John Smith', subject: 'JAVA' },
+    { tno: '002', tname: 'Jane Doe', subject: 'Python' },
+    { tno: '003', tname: 'Bob Johnson', subject: 'C++' },
+    { tno: '004', tname: 'Alice Lee', subject: 'JAVA' },
+    { tno: '005', tname: 'Mike Chen', subject: 'JavaScript' }
+  ];
+
+  const result = await Teacher.insertMany(teachers);
+  console.log(result);
+}
+
+// display teacher who is teaching "JAVA" subject
+async function displayJavaTeacher() {
+  const javaTeacher = await Teacher.find({ subject: 'JAVA' });
+  console.log(javaTeacher);
+}
+
+// call insertTeachers function to insert teachers into Teacher collection
+insertTeachers();
+
+// call displayJavaTeacher function to display teacher who is teaching "JAVA" subject
+displayJavaTeacher();

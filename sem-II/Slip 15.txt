@@ -1,0 +1,120 @@
+//SLIP 15
+
+//Q3A FSD
+
+var http = require('http');
+var url = require('url');
+var fs = require('fs');
+
+http.createServer(function (req, res) {
+  var q = url.parse(req.url, true);
+  var filename = "." + q.pathname;
+
+  try {
+    fs.readFile(filename, function (err, data) {
+      if (err) {
+        res.writeHead(404, {'Content-Type': 'text/html'});
+        return res.end("404 Not Found");
+      }
+      res.writeHead(200, {'Content-Type': 'text/html'});
+      res.write(data);
+      res.end();
+    });
+  } catch (e) {
+    res.writeHead(404, {'Content-Type': 'text/html'});
+    return res.end("404 Not Found");
+  }
+}).listen(8080);
+
+//Q3B 
+
+// Create a database called "Movies"
+const db = new MongoClient("mongodb://localhost:27017").db("Movies");
+
+// Create a collection called "Films"
+const films = db.collection("Films");
+
+// Add five movies to the "Films" collection
+films.insertMany([
+  {
+    "name": "The Shawshank Redemption",
+    "genre": "Drama",
+    "rating": 9.3
+  },
+  {
+    "name": "The Godfather",
+    "genre": "Crime",
+    "rating": 9.2
+  },
+  {
+    "name": "The Dark Knight",
+    "genre": "Action",
+    "rating": 9.0
+  },
+  {
+    "name": "Pulp Fiction",
+    "genre": "Crime",
+    "rating": 8.9
+  },
+  {
+    "name": "The Lord of the Rings: The Return of the King",
+    "genre": "Fantasy",
+    "rating": 8.9
+  }
+]);
+
+// Create a collection called "Tags"
+const tags = db.collection("Tags");
+
+// Add five tags to the "Tags" collection
+tags.insertMany([
+  {
+    "name": "Action"
+  },
+  {
+    "name": "Crime"
+  },
+  {
+    "name": "Drama"
+  },
+  {
+    "name": "Fantasy"
+  },
+  {
+    "name": "Thriller"
+  }
+]);
+
+// Create a collection called "Ratings"
+const ratings = db.collection("Ratings");
+
+// Add five ratings to the "Ratings" collection
+ratings.insertMany([
+  {
+    "user_id": 1,
+    "movie_id": 1,
+    "rating": 5
+  },
+  {
+    "user_id": 2,
+    "movie_id": 2,
+    "rating": 4
+  },
+  {
+    "user_id": 3,
+    "movie_id": 3,
+    "rating": 3
+  },
+  {
+    "user_id": 4,
+    "movie_id": 4,
+    "rating": 2
+  },
+  {
+    "user_id": 5,
+    "movie_id": 5,
+    "rating": 1
+  }
+]);
+
+

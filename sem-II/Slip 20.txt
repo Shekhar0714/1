@@ -1,0 +1,26 @@
+//SLIP 20
+
+//Q3A FSD
+
+const os = require('os');
+
+// Get the operating system platform
+const platform = os.platform();
+
+// Get the temporary file directory
+const tempDir = os.tmpdir();
+
+// Print the output
+console.log(`Operating system platform: ${platform}`);
+console.log(`Temporary file directory: ${tempDir}`);
+
+//Q3B
+
+const upperCase = require('upper-case');
+
+const originalString = 'Hello, Welcome in Node js';
+
+const uppercaseString = upperCase(originalString);
+
+console.log(uppercaseString); // HELLO, WELCOME IN NODE JS
+

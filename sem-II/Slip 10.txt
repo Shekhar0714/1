@@ -1,0 +1,53 @@
+//SLIP 10
+
+//Q3 FSD
+
+const mongoose = require('mongoose');
+
+// connect to database
+mongoose.connect('mongodb://localhost/busdb', { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Connected to MongoDB...'))
+  .catch(err => console.error('Could not connect to MongoDB...', err));
+
+// define schema for bus depo
+const busDepoSchema = new mongoose.Schema({
+  name: String,
+  location: String,
+  capacity: Number
+});
+
+// define schema for bus route
+const busRouteSchema = new mongoose.Schema({
+  routeNumber: Number,
+  startingPoint: String,
+  endingPoint: String,
+  distance: Number,
+  depo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'BusDepo'
+  }
+});
+
+// create models for bus depo and bus route
+const BusDepo = mongoose.model('BusDepo', busDepoSchema);
+const BusRoute = mongoose.model('BusRoute', busRouteSchema);
+
+// create a new bus depo and save to database
+const busDepo = new BusDepo({
+  name: 'ABC Bus Depo',
+  location: 'XYZ Street',
+  capacity: 50
+});
+busDepo.save();
+
+// create a new bus route and save to database
+const busRoute = new BusRoute({
+  routeNumber: 1,
+  startingPoint: 'Point A',
+  endingPoint: 'Point B',
+  distance: 10,
+  depo: busDepo._id
+});
+busRoute.save();
+
+

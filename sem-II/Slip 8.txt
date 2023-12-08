@@ -1,0 +1,32 @@
+//SLIP 08
+
+//Q3 FSD
+
+const http = require('http');
+const fs = require('fs');
+
+const server = http.createServer((req, res) => {
+  if (req.url === '/') {
+    // Read the HTML file
+    fs.readFile('index.html', (err, data) => {
+      if (err) {
+        // Handle error
+        res.writeHead(500);
+        res.end('Error loading index.html');
+      } else {
+        // Serve the HTML file
+        res.writeHead(200, {'Content-Type': 'text/html'});
+        res.end(data);
+      }
+    });
+  } else {
+    // Handle 404 error
+    res.writeHead(404);
+    res.end('Page not found');
+  }
+});
+
+server.listen(3000, () => {
+  console.log('Server running on port 3000');
+});
+

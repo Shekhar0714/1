@@ -1,0 +1,74 @@
+//SLIP 09
+
+//Q3 FSD
+
+// import required modules
+const mongoose = require('mongoose');
+
+// connect to the MongoDB database
+mongoose.connect('mongodb://localhost/students', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
+
+// define the schema for the UG collection
+const ugSchema = new mongoose.Schema({
+  name: String,
+  rollNo: String,
+  batch: String,
+  department: String,
+  cgpa: Number
+});
+
+// create the UG collection model
+const UG = mongoose.model('UG', ugSchema);
+
+// define the schema for the PG collection
+const pgSchema = new mongoose.Schema({
+  name: String,
+  rollNo: String,
+  batch: String,
+  department: String,
+  percentage: Number
+});
+
+// create the PG collection model
+const PG = mongoose.model('PG', pgSchema);
+
+// create a new document in the UG collection
+const ugStudent = new UG({
+  name: 'John Doe',
+  rollNo: 'UG001',
+  batch: '2023',
+  department: 'Computer Science',
+  cgpa: 8.5
+});
+
+// save the UG student document to the database
+ugStudent.save()
+  .then((result) => {
+    console.log(result);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+// create a new document in the PG collection
+const pgStudent = new PG({
+  name: 'Jane Smith',
+  rollNo: 'PG001',
+  batch: '2022',
+  department: 'Electrical Engineering',
+  percentage: 85
+});
+
+// save the PG student document to the database
+pgStudent.save()
+  .then((result) => {
+    console.log(result);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+

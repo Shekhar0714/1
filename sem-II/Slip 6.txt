@@ -1,0 +1,52 @@
+//SLIP 06
+
+//Q3 FSD
+
+// Import required modules
+const MongoClient = require('mongodb').MongoClient;
+
+// Connection URL
+const url = 'mongodb://localhost:27017';
+
+// Database Name
+const dbName = 'movie_database';
+
+// Create a MongoClient instance
+const client = new MongoClient(url);
+
+// Use connect method to connect to the server
+client.connect(function(err) {
+  console.log("Connected successfully to server");
+
+  const db = client.db(dbName);
+
+  // Create a collection "Film" and insert documents
+  const filmCollection = db.collection('Film');
+  filmCollection.insertMany([
+    { title: 'The Shawshank Redemption', year: 1994, director: 'Frank Darabont' },
+    { title: 'The Godfather', year: 1972, director: 'Francis Ford Coppola' },
+    { title: 'The Dark Knight', year: 2008, director: 'Christopher Nolan' },
+    { title: 'Pulp Fiction', year: 1994, director: 'Quentin Tarantino' },
+    { title: 'The Lord of the Rings: The Fellowship of the Ring', year: 2001, director: 'Peter Jackson' }
+  ], function(err, result) {
+    if (err) throw err;
+    console.log("Inserted documents into Film collection");
+  });
+
+  // Create a collection "Actor" and insert documents
+  const actorCollection = db.collection('Actor');
+  actorCollection.insertMany([
+    { name: 'Morgan Freeman', age: 84, gender: 'Male' },
+    { name: 'Marlon Brando', age: 80, gender: 'Male' },
+    { name: 'Heath Ledger', age: 28, gender: 'Male' },
+    { name: 'Uma Thurman', age: 51, gender: 'Female' },
+    { name: 'Ian McKellen', age: 82, gender: 'Male' }
+  ], function(err, result) {
+    if (err) throw err;
+    console.log("Inserted documents into Actor collection");
+  });
+
+  // Close the connection to the server
+  client.close();
+});
+

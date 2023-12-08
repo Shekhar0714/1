@@ -1,0 +1,16 @@
+//SLIP 19
+
+//Q3 FSD
+
+const os = require('os');
+
+// Get the operating system platform
+const platform = os.platform();
+
+// Get the temporary file directory
+const tempDir = os.tmpdir();
+
+// Print the output
+console.log(`Operating system platform: ${platform}`);
+console.log(`Temporary file directory: ${tempDir}`);
+

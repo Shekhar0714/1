@@ -1,0 +1,34 @@
+//SLIP 14
+
+//Q3A
+
+const http = require('http');
+
+// Create a new server object.
+const server = http.createServer((req, res) => {
+  // Send a simple response.
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.end('Hello World!');
+});
+
+// Listen for requests on port 3000.
+server.listen(3000, () => {
+  console.log('Server listening on port 3000');
+});
+
+//Q3B
+
+const db = require('./db');
+
+const query = `
+SELECT COUNT(*) AS total_actors
+FROM actors
+WHERE state = 'CA';
+`;
+
+const results = await db.query(query);
+
+const totalActors = results[0].total_actors;
+
+console.log(`There are ${totalActors} actors in the database who were born in California.`);
+

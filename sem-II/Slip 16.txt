@@ -1,0 +1,58 @@
+//SLIP 16
+
+//Q3 FSD
+
+// Import the necessary modules
+const express = require('express');
+const bodyParser = require('body-parser');
+const mongodb = require('mongodb');
+
+// Create an Express app
+const app = express();
+
+// Configure body parser to parse the HTTP POST data
+app.use(bodyParser.json());
+
+// Create a connection to the MongoDB database
+const mongoClient = new mongodb.MongoClient('mongodb://localhost:27017/mydb');
+
+// Create a route to handle the sign-up form
+app.post('/signup', (req, res) => {
+  // Get the user data from the HTTP POST request
+  const { name, email, password, phone } = req.body;
+
+  // Check if the user name already exists
+  mongoClient.db('mydb').collection('users').findOne({
+    name,
+  }, (err, user) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send('Internal server error');
+    } else if (user) {
+      res.status(409).send('User name already exists');
+    } else {
+      // Create a new user document
+      const newUser = {
+        name,
+        email,
+        password,
+        phone,
+      };
+
+      // Insert the new user document into the database
+      mongoClient.db('mydb').collection('users').insertOne(newUser, (err, result) => {
+        if (err) {
+          console.log(err);
+          res.status(500).send('Internal server error');
+        } else {
+          res.status(201).send('User created successfully');
+        }
+      });
+    }
+  });
+});
+
+// Start the app
+app.listen(3000, () => {
+  console.log('App listening on port 3000');
+});

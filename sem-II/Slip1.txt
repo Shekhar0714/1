@@ -1,0 +1,83 @@
+//SLIP 01
+//Q3A.FSD
+
+const http = require('http');
+const fs = require('fs');
+const url = require('url');
+
+// create server
+http.createServer(function(req, res) {
+  if (req.url === '/append') {
+    // handle form submission
+    let body = '';
+    req.on('data', function(data) {
+      body += data;
+    });
+    req.on('end', function() {
+      // parse form data
+      const formData = new URLSearchParams(body);
+      const file1 = formData.get('file1');
+      const file2 = formData.get('file2');
+      
+      // read contents of file1
+      fs.readFile(file1, 'utf8', function(err, data) {
+        if (err) {
+          res.writeHead(404);
+          res.end('File not found');
+          return;
+        }
+        
+        // append contents of file1 to file2
+        fs.appendFile(file2, data, function(err) {
+          if (err) {
+            res.writeHead(500);
+            res.end('Error writing to file');
+            return;
+          }
+          
+          res.writeHead(200, {'Content-Type': 'text/html'});
+          res.end('<html><body>Contents of ' + file1 + ' have been appended to ' + file2 + '</body></html>');
+        });
+      });
+    });
+  } else {
+    // serve form
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.write('<html><body>');
+    res.write('<h1>Append contents of one file to another</h1>');
+    res.write('<form method="post" action="/append">');
+    res.write('<label for="file1">File 1:</label>');
+    res.write('<input type="text" name="file1"><br>');
+    res.write('<label for="file2">File 2:</label>');
+    res.write('<input type="text" name="file2"><br>');
+    res.write('<input type="submit" value="Append">');
+    res.write('</form>');
+    res.write('</body></html>');
+    res.end();
+  }
+}).listen(3000);
+
+console.log('Server running at http://localhost:3000/');
+
+//Q3B.FSD
+
+const http = require('http');
+const fs = require('fs');
+
+const server = http.createServer((req, res) => {
+  const filePath = '.' + req.url;
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      res.writeHead(404, {'Content-Type': 'text/plain'});
+      res.end('404 Not Found');
+    } else {
+      res.writeHead(200, {'Content-Type': 'text/plain'});
+      res.end(data);
+    }
+  });
+});
+
+server.listen(8080, () => {
+  console.log('Server running at http://localhost:8080/');
+});
+

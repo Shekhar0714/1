@@ -1,0 +1,53 @@
+//SLIP 13
+
+//Q3 FSD
+
+const mongoose = require('mongoose');
+
+// Connect to MongoDB
+mongoose.connect('mongodb://localhost/bus-db', { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Connected to MongoDB...'))
+  .catch(err => console.error('Could not connect to MongoDB...', err));
+
+// Define the schema for bus-depo
+const busDepoSchema = new mongoose.Schema({
+  name: String,
+  location: String
+});
+
+// Define the schema for busroute
+const busRouteSchema = new mongoose.Schema({
+  name: String,
+  route: String,
+  distance: Number
+});
+
+// Create bus-depo and busroute models
+const BusDepo = mongoose.model('bus-depo', busDepoSchema);
+const BusRoute = mongoose.model('busroute', busRouteSchema);
+
+// Insert documents into bus-depo collection
+const busDepo = new BusDepo({
+  name: 'ABC Bus Depo',
+  location: 'Pune'
+});
+busDepo.save()
+  .then(() => console.log('Document saved in bus-depo collection...'))
+  .catch(err => console.error('Could not save document in bus-depo collection...', err));
+
+// Insert documents into busroute collection
+const busRoute = new BusRoute({
+  name: 'ABC Bus',
+  route: 'Pune to Satara',
+  distance: 120
+});
+busRoute.save()
+  .then(() => console.log('Document saved in busroute collection...'))
+  .catch(err => console.error('Could not save document in busroute collection...', err));
+
+// Find the name of bus whose route is "Pune to Satara"
+BusRoute.findOne({ route: 'Pune to Satara' }, 'name')
+  .then(bus => console.log(`Bus name: ${bus.name}`))
+  .catch(err => console.error('Could not find bus...', err));
+
+

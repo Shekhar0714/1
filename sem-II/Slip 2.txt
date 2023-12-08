@@ -1,0 +1,34 @@
+//SLIP 02
+
+//Q3 FSD
+
+const readline = require('readline');
+
+// define the correct username and password
+const correctUsername = 'user123';
+const correctPassword = 'password123';
+
+// create a readline interface for reading user input
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+// prompt the user for username and password
+rl.question('Enter your username: ', (username) => {
+  rl.question('Enter your password: ', (password) => {
+    // check if username and password are correct
+    if (username === correctUsername && password === correctPassword) {
+      console.log('Login successful');
+    } else {
+      throw new Error('Login failed');
+    }
+  });
+});
+
+// handle errors thrown by the program
+process.on('uncaughtException', (err) => {
+  console.error(err);
+  process.exit(1);
+});
+

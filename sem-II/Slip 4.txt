@@ -1,0 +1,26 @@
+//SLIP 04
+
+// Q3 FSD
+
+// Import required packages
+const express = require('express');
+const app = express();
+
+// Define routes
+app.get('/', (req, res) => {
+  res.send('Welcome to eLearning System!');
+});
+
+app.get('/student', (req, res) => {
+  res.send('This is the Student page.');
+});
+
+app.get('/course', (req, res) => {
+  res.send('This is the Course page.');
+});
+
+// Start server
+app.listen(3000, () => {
+  console.log('Server started on port 3000');
+});
+
